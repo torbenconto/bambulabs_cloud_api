@@ -42,8 +42,8 @@ func NewClient(config *Config) *Client {
 	}
 }
 
-func NewClientWithToken(config *Config, token string) *Client {
-	client := NewClient(config)
+func NewClientWithToken(token string) *Client {
+	client := NewClient(&Config{})
 	client.token = token
 	return client
 }

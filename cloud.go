@@ -174,6 +174,9 @@ func (c *Client) SubmitVerificationCode(code string) (string, error) {
 	return c.token, nil
 }
 
+type userInfoResponse struct {
+	UserID int json:"uid"
+}
 func (c *Client) GetUserID() (int, error) {
 	if c.token == "" {
 		return -1, fmt.Errorf("no token")

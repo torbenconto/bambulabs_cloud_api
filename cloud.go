@@ -44,8 +44,10 @@ func NewClient(config *Config) *Client {
 	}
 }
 
-func NewClientWithToken(token string) *Client {
-	client := NewClient(&Config{})
+func NewClientWithToken(region Region, token string) *Client {
+	client := NewClient(&Config{
+		Region: region,
+	})
 	client.token = token
 	return client
 }

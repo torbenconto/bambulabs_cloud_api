@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const userAgent = "BambulabsCloudAPI/1.0"
+
 const (
 	baseUrlCN = "https://api.bambulab.cn/v1"
 	baseUrlUS = "https://api.bambulab.com/v1"
@@ -94,6 +96,7 @@ func (c *Client) Login() (string, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", userAgent) // Add User-Agent header
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -122,6 +125,7 @@ func (c *Client) Login() (string, error) {
 	return c.token, nil
 }
 
+
 type submitVerificationCodeRequest struct {
 	Email string `json:"account"`
 	Code  string `json:"code"`
@@ -145,6 +149,7 @@ func (c *Client) SubmitVerificationCode(code string) (string, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", userAgent) // Add User-Agent header
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -169,10 +174,6 @@ func (c *Client) SubmitVerificationCode(code string) (string, error) {
 	return c.token, nil
 }
 
-type userInfoResponse struct {
-	UserID int `json:"uid"`
-}
-
 func (c *Client) GetUserID() (int, error) {
 	if c.token == "" {
 		return -1, fmt.Errorf("no token")
@@ -186,6 +187,7 @@ func (c *Client) GetUserID() (int, error) {
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("User-Agent", userAgent) // Add User-Agent header
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -239,6 +241,7 @@ func (c *Client) GetPrintersAsPool() (*PrinterPool, error) {
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("User-Agent", userAgent) // Add User-Agent header
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -273,7 +276,7 @@ func (c *Client) GetPrintersAsPool() (*PrinterPool, error) {
 
 	mqttConfig := &mqtt.ClientConfig{
 		Host:       c.getMqttHost(),
-		Port:       8883, // Assuming the port is 8883, change if necessary
+		Port:       8883,
 		Serials:    serials,
 		Username:   "u_" + strconv.Itoa(uid),
 		AccessCode: c.token,

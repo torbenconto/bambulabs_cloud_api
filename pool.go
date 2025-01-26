@@ -62,6 +62,20 @@ func (p *PrinterPool) ConnectAll() error {
 	return result
 }
 
+func (p *PrinterPool) DisconnectAll() {
+	p.printers.Range(func(_, value interface{}) bool {
+		printer, ok := value.(*Printer)
+		if !ok {
+			return false
+		}
+
+		printer.Disconnect()
+		return true
+	})
+
+	p.mqttClient.Disconnect()
+}
+
 func (p *PrinterPool) AddPrinter(config *PrinterConfig) {
 	printer := NewPrinter(config)
 	p.printers.Store(config.SerialNumber, printer)

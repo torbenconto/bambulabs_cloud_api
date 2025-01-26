@@ -75,6 +75,7 @@ func (c *Client) Connect() error {
 	log.Println("Connected to MQTT broker")
 	go c.processMessages()
 	go c.periodicUpdate()
+	c.updateAllSerials()
 	return nil
 }
 
@@ -197,11 +198,46 @@ func (c *Client) periodicUpdate() {
 	for {
 		select {
 		case <-c.ticker.C:
-			c.update()
+			c.updateAllSerials()
 		case <-c.doneChan:
 			return
 		}
 	}
+}
+
+func (c *Client) updateAllSerials() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if time.Since(c.lastUpdate) < c.config.Timeout {
+		return
+	}
+
+	c.lastUpdate = time.Now()
+	for _, serial := range c.config.Serials {
+		command := NewCommand(Pushing).AddCommandField("pushall")
+		js, _ := command.JSON()
+		fmt.Println("command", js)
+		if err := c.PublishToSerial(command, serial); err != nil {
+			log.Printf("Failed to publish update command to serial %s: %v", serial, err)
+		}
+	}
+}
+
+func (c *Client) PublishToSerial(command *Command, serial string) error {
+	rawCommand, err := command.JSON()
+	if err != nil {
+		return fmt.Errorf("failed to marshal command: %w", err)
+	}
+
+	topic := fmt.Sprintf(commandTopic, serial)
+	token := c.client.Publish(topic, qos, false, rawCommand)
+	if token.Wait() && token.Error() != nil {
+		return fmt.Errorf("failed to publish to topic %s: %w", topic, token.Error())
+	}
+
+	log.Printf("Published command to topic %s", topic)
+	return nil
 }
 
 // mergeMessages recursively merges the existing and new messages.

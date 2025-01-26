@@ -57,6 +57,8 @@ func (p *Printer) Data() (Data, error) {
 		PrintPercentDone:        data.Print.McPercent,
 		PrintErrorCode:          data.Print.McPrintErrorCode,
 		RemainingPrintTime:      data.Print.McRemainingTime,
+		SubtaskName:             data.Print.SubtaskName,
+		TotalLayerNumber:        data.Print.TotalLayerNum,
 		NozzleDiameter:          data.Print.NozzleDiameter,
 		NozzleTargetTemperature: data.Print.NozzleTargetTemper,
 		NozzleTemperature:       data.Print.NozzleTemper,

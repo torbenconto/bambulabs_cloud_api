@@ -306,7 +306,7 @@ type GetTasksResponse struct {
 	Hits  []struct {
 		ID               int    `json:"id"`
 		DesignID         int    `json:"designId"`
-		ModelID          int    `json:"modelId"`
+		ModelID          string `json:"modelId"`
 		Title            string `json:"title"`
 		Cover            string `json:"cover"`
 		Status           int    `json:"status"`

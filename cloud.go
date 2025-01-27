@@ -218,17 +218,19 @@ func (c *Client) GetUserID() (int, error) {
 	return userInfoResp.UserID, nil
 }
 
+type Device struct {
+	DevID          string `json:"dev_id"`
+	Name           string `json:"name"`
+	Online         bool   `json:"online"`
+	PrintStatus    string `json:"print_status"`
+	DevModelName   string `json:"dev_model_name"`
+	DevProductName string `json:"dev_product_name"`
+	DevAccessCode  string `json:"dev_access_code"`
+}
+
 type getPrintersResponse struct {
 	baseResponse
-	Devices []struct {
-		DevID          string `json:"dev_id"`
-		Name           string `json:"name"`
-		Online         bool   `json:"online"`
-		PrintStatus    string `json:"print_status"`
-		DevModelName   string `json:"dev_model_name"`
-		DevProductName string `json:"dev_product_name"`
-		DevAccessCode  string `json:"dev_access_code"`
-	} `json:"devices"`
+	Devices []Device `json:"devices"`
 }
 
 // GetPrintersAsPool returns a printer pool with all printers that are bound to the user.
@@ -369,4 +371,43 @@ func (c *Client) GetTasks(serial string) (*GetTasksResponse, error) {
 	}
 
 	return &tasksResp, nil
+}
+
+func (c *Client) ListDevices() ([]Device, error) {
+	if c.token == "" {
+		return nil, fmt.Errorf("no token")
+	}
+
+	url := c.getBaseUrl() + "/iot-service/api/user/bind"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("User-Agent", userAgent) // Add User-Agent header
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("list devices failed: %s", response.Status)
+	}
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var devicesResp getPrintersResponse
+	if err := json.Unmarshal(body, &devicesResp); err != nil {
+		return nil, err
+	}
+
+	return devicesResp.Devices, nil
 }

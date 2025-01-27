@@ -339,7 +339,7 @@ func (c *Client) GetTasks(serial string) (*GetTasksResponse, error) {
 		return &GetTasksResponse{}, fmt.Errorf("no token")
 	}
 
-	url := c.getBaseUrl() + "/iot-service/api/device/task?deviceId=" + serial
+	url := c.getBaseUrl() + "/user-service/my/tasks?deviceId=" + serial
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {

@@ -127,7 +127,6 @@ func (c *Client) Login() (string, error) {
 	return c.token, nil
 }
 
-
 type submitVerificationCodeRequest struct {
 	Email string `json:"account"`
 	Code  string `json:"code"`
@@ -179,6 +178,7 @@ func (c *Client) SubmitVerificationCode(code string) (string, error) {
 type userInfoResponse struct {
 	UserID int `json:"uid"`
 }
+
 func (c *Client) GetUserID() (int, error) {
 	if c.token == "" {
 		return -1, fmt.Errorf("no token")
@@ -297,4 +297,76 @@ func (c *Client) GetPrintersAsPool() (*PrinterPool, error) {
 	}
 
 	return pool, nil
+}
+
+type GetTasksResponse struct {
+	Total int `json:"total"`
+	Hits  []struct {
+		ID               int    `json:"id"`
+		DesignID         int    `json:"designId"`
+		ModelID          int    `json:"modelId"`
+		Title            string `json:"title"`
+		Cover            string `json:"cover"`
+		Status           int    `json:"status"`
+		Weight           int    `json:"weight"`
+		Length           int    `json:"length"`
+		CostTime         int    `json:"costTime"`
+		ProfileID        int    `json:"profileId"`
+		PlateIndex       int    `json:"plateIndex"`
+		PlateName        string `json:"plateName"`
+		DeviceID         string `json:"deviceId"`
+		DeviceModel      string `json:"deviceModel"`
+		DeviceName       string `json:"deviceName"`
+		AMSDetailMapping []struct {
+			AMS                int    `json:"ams"`
+			SourceColor        string `json:"sourceColor"`
+			TargetColor        string `json:"targetColor"`
+			FilamentID         int    `json:"filamentId"`
+			FilamentType       string `json:"filamentType"`
+			TargetFilamentType string `json:"targetFilamentType"`
+			Weight             int    `json:"weight"`
+			NozzleID           int    `json:"nozzleId"`
+			AMSID              int    `json:"amsId"`
+			SlotID             int    `json:"slotId"`
+		} `json:"amsDetailMapping"`
+	} `json:"hits"`
+}
+
+func (c *Client) GetTasks(serial string) (*GetTasksResponse, error) {
+	if c.token == "" {
+		return &GetTasksResponse{}, fmt.Errorf("no token")
+	}
+
+	url := c.getBaseUrl() + "/iot-service/api/device/task?deviceId=" + serial
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return &GetTasksResponse{}, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("User-Agent", userAgent)
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return &GetTasksResponse{}, err
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return &GetTasksResponse{}, fmt.Errorf("get task failed: %s", response.Status)
+	}
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return &GetTasksResponse{}, err
+	}
+
+	var tasksResp GetTasksResponse
+	if err := json.Unmarshal(body, &tasksResp); err != nil {
+		return &GetTasksResponse{}, err
+	}
+
+	return &tasksResp, nil
 }

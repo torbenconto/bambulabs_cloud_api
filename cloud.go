@@ -323,7 +323,7 @@ type GetTasksResponse struct {
 			AMS                int    `json:"ams"`
 			SourceColor        string `json:"sourceColor"`
 			TargetColor        string `json:"targetColor"`
-			FilamentID         int    `json:"filamentId"`
+			FilamentID         string `json:"filamentId"`
 			FilamentType       string `json:"filamentType"`
 			TargetFilamentType string `json:"targetFilamentType"`
 			Weight             int    `json:"weight"`

@@ -310,8 +310,8 @@ type GetTasksResponse struct {
 		Title            string `json:"title"`
 		Cover            string `json:"cover"`
 		Status           int    `json:"status"`
-		Weight           int    `json:"weight"`
-		Length           int    `json:"length"`
+		Weight           float64    `json:"weight"`
+		Length           float64    `json:"length"`
 		CostTime         int    `json:"costTime"`
 		ProfileID        int    `json:"profileId"`
 		PlateIndex       int    `json:"plateIndex"`
@@ -326,7 +326,7 @@ type GetTasksResponse struct {
 			FilamentID         string `json:"filamentId"`
 			FilamentType       string `json:"filamentType"`
 			TargetFilamentType string `json:"targetFilamentType"`
-			Weight             int    `json:"weight"`
+			Weight             float64    `json:"weight"`
 			NozzleID           int    `json:"nozzleId"`
 			AMSID              int    `json:"amsId"`
 			SlotID             int    `json:"slotId"`

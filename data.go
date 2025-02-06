@@ -46,6 +46,10 @@ type Data struct {
 	PrintErrorCode          string           `json:"print_error_code"`           // Current print error code
 	RemainingPrintTime      int              `json:"remaining_print_time"`       // Estimated remaining print time (minutes)
 	SubtaskName             string           `json:"subtask_name"`               // Name of the current print subtask
+	SubtaskID               int              `json:"subtask_id"`                 // ID of the current print subtask
+	TaskID                  int              `json:"task_id"`                    // ID of the current print task
+	ProjectID               string           `json:"project_id"`                 // ID of the current project
+	ProfileID               string           `json:"profile_id"`                 // ID of the current print profile
 	TotalLayerNumber        int              `json:"total_layer_num"`            // Total number of layers in the print
 	NozzleDiameter          string           `json:"nozzle_diameter"`            // Diameter of the nozzle (mm)
 	NozzleTargetTemperature float64          `json:"nozzle_target_temperature"`  // Target nozzle temperature (°C)

@@ -58,6 +58,8 @@ func (p *Printer) Data() (Data, error) {
 		PrintErrorCode:          data.Print.McPrintErrorCode,
 		RemainingPrintTime:      data.Print.McRemainingTime,
 		SubtaskName:             data.Print.SubtaskName,
+		SubtaskID:               unsafeParseInt(data.Print.SubtaskID),
+		TaskID:                  unsafeParseInt(data.Print.TaskID),
 		TotalLayerNumber:        data.Print.TotalLayerNum,
 		NozzleDiameter:          data.Print.NozzleDiameter,
 		NozzleTargetTemperature: data.Print.NozzleTargetTemper,

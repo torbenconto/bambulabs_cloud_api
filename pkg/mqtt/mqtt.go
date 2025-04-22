@@ -129,6 +129,8 @@ func (c *Client) handleMessage(client paho.Client, msg paho.Message) {
 	case c.messageChan <- msg:
 		log.Printf("Message received: %s", msg.Topic())
 	default:
+		<-c.messageChan
+		c.messageChan <- msg
 		log.Println("Message dropped: channel full")
 	}
 }
@@ -137,7 +139,7 @@ func (c *Client) processMessages() {
 	for {
 		select {
 		case msg := <-c.messageChan:
-			c.processPayload(msg)
+			go c.processPayload(msg)
 		case <-c.doneChan:
 			return
 		}

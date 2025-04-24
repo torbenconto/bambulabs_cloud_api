@@ -135,15 +135,25 @@ func (c *Client) handleMessage(client paho.Client, msg paho.Message) {
 	}
 }
 
+const workerCount = 10
+
 func (c *Client) processMessages() {
-	for {
-		select {
-		case msg := <-c.messageChan:
-			go c.processPayload(msg)
-		case <-c.doneChan:
-			return
-		}
+	var wg sync.WaitGroup
+	for i := 0; i < workerCount; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case msg := <-c.messageChan:
+					c.processPayload(msg)
+				case <-c.doneChan:
+					return
+				}
+			}
+		}()
 	}
+	wg.Wait()
 }
 
 func (c *Client) processPayload(msg paho.Message) {

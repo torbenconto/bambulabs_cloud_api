@@ -8,6 +8,5 @@
 <h1>Bambulabs API Golang Library</h1>
 </div>
 
-> [!IMPORTANT]
 # This library is not well-made. It works but is just not the greatest design-wise. Consider using bambulabs_api for local communication. I will rewrite this soon.
 No documentation is available for the moment due to the imminent rewrite.
